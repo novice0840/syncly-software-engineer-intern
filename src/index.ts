@@ -2,6 +2,7 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import * as fs from "fs";
 import * as path from "path";
+import { convertTimestampToYYYYMMDD, delay } from "./utils";
 
 const TOTAL_REVIEWS_PER_PRODUCT = 1500;
 const SIZE_PER_PAGE = 10;
@@ -19,7 +20,10 @@ interface Review {
   content: string;
 }
 
-const crawlWithAxios = async <T>(url: string): Promise<T> => {
+const crawlWithAxios = async <T>(
+  url: string,
+  productId: string
+): Promise<T> => {
   console.log(`Crawling URL: ${url}`);
   const response = await axios.get(url, {
     headers: {
@@ -28,20 +32,11 @@ const crawlWithAxios = async <T>(url: string): Promise<T> => {
       "Accept-Encoding": "gzip, deflate, br",
       "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
       Connection: "keep-alive",
-      Referer: "https://www.coupang.com/",
+      Referer: `https://www.coupang.com/vp/products/${productId}`,
     },
     timeout: 10000,
   });
   return response.data;
-};
-
-const convertTimestampToYYYYMMDD = (timestamp: number): string => {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
 };
 
 const getReviews = async (
@@ -51,7 +46,7 @@ const getReviews = async (
   try {
     const url = `https://www.coupang.com/next-api/review?productId=${productid}&page=${page}&size=${SIZE_PER_PAGE}&sortBy=ORDER_SCORE_ASC&ratingSummary=true&ratings=&market=`;
 
-    const data: any = await crawlWithAxios(url);
+    const data: any = await crawlWithAxios(url, productid);
 
     if (data.rData && data.rData.paging && data.rData.paging.contents) {
       return data.rData.paging.contents.map((review: any) => {
@@ -77,8 +72,6 @@ const getReviews = async (
     return [];
   }
 };
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const getAllReviews = async (
   productId: string,
@@ -152,11 +145,11 @@ const createExcelFile = (
 
 const main = async () => {
   const productIDs = [
-    // "130180913",
-    // "7059056549",
-    // "8401815959",
+    "130180913",
+    "7059056549",
+    "8401815959",
     "5720576807",
-    // "5609088403",
+    "5609088403",
   ];
 
   try {
