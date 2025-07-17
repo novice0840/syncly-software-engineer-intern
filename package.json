@@ -8,7 +8,10 @@
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
     "watch": "tsc -w",
-    "dev:watch": "nodemon --exec ts-node src/index.ts"
+    "dev:watch": "nodemon --exec ts-node src/index.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch"
   },
   "keywords": [
     "typescript",
@@ -22,7 +25,9 @@
     "nodemon": "^3.0.0",
     "ts-node": "^10.9.0",
     "typescript": "^5.0.0",
-    "@types/xlsx": "^0.0.36"
+    "@types/xlsx": "^0.0.36",
+    "vitest": "^2.0.0",
+    "@vitest/ui": "^2.0.0"
   },
   "dependencies": {
     "axios": "^1.10.0",

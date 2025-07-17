@@ -2,27 +2,10 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import * as fs from "fs";
 import * as path from "path";
-import { convertTimestampToYYYYMMDD, delay } from "./utils";
+import { convertTimestampToYYYYMMDD, createProxyAgent, delay } from "./utils";
 import * as dotenv from "dotenv";
-import { HttpsProxyAgent } from "https-proxy-agent";
 
 dotenv.config();
-
-const TOTAL_REVIEWS_PER_PRODUCT = 1500;
-const SIZE_PER_PAGE = 10;
-const MAX_PAGES = Math.ceil(TOTAL_REVIEWS_PER_PRODUCT / SIZE_PER_PAGE);
-const DELAY = 5000;
-
-const OXYLABS_PROXY_HOST = process.env.OXYLABS_PROXY_HOST || "pr.oxylabs.io";
-const OXYLABS_PROXY_PORT = process.env.OXYLABS_PROXY_PORT || "7777";
-const OXYLABS_USERNAME = process.env.OXYLABS_USERNAME || "your_username";
-const OXYLABS_PASSWORD = process.env.OXYLABS_PASSWORD || "your_password";
-
-const createProxyAgent = () => {
-  const proxyUrl = `https://${OXYLABS_USERNAME}:${OXYLABS_PASSWORD}@${OXYLABS_PROXY_HOST}:${OXYLABS_PROXY_PORT}`;
-  return new HttpsProxyAgent(proxyUrl);
-};
-
 interface Review {
   productId: string;
   productName: string;
@@ -34,6 +17,11 @@ interface Review {
   title: string;
   content: string;
 }
+
+const TOTAL_REVIEWS_PER_PRODUCT = 1500;
+const SIZE_PER_PAGE = 10;
+const MAX_PAGES = Math.ceil(TOTAL_REVIEWS_PER_PRODUCT / SIZE_PER_PAGE);
+const DELAY = 5000;
 
 const crawlWithAxios = async <T>(
   url: string,
@@ -200,12 +188,6 @@ const main = async () => {
     console.log(`📊 수집할 제품 수: ${productIDs.length}`);
     console.log(`📝 각 제품당 최대 리뷰 수: ${TOTAL_REVIEWS_PER_PRODUCT}`);
     console.log(`⏰ 각 요청간 대기 시간: ${DELAY}ms`);
-    console.log("🌐 Oxylabs Residential Proxy 사용");
-    console.log(`   - Host: ${OXYLABS_PROXY_HOST}`);
-    console.log(`   - Port: ${OXYLABS_PROXY_PORT}`);
-    console.log(`   - Username: ${OXYLABS_USERNAME}`);
-    console.log("────────────────────────────────────");
-
     const allProductReviews: { productId: string; reviews: Review[] }[] = [];
 
     for (const productId of productIDs) {
