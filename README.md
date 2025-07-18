@@ -29,6 +29,17 @@ npm run dev
 npm run test
 ```
 
+### .env
+
+OXYLABS PROXY를 사용하기 위해 환경 변수를 추가해야한다.
+
+```
+OXYLABS_PROXY_HOST=pr.oxylabs.io
+OXYLABS_PROXY_PORT=7777
+OXYLABS_USERNAME=USERNAME
+OXYLABS_PASSWORD=PASSWORD
+```
+
 ## 결과 파일
 
 - `output/` 디렉토리에 엑셀 파일이 생성된다.
