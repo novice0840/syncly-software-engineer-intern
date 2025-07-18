@@ -121,3 +121,17 @@ export const createExcelFile = (
   XLSX.writeFile(workbook, filepath);
   return filepath;
 };
+
+export const printCrawlingSummary = (
+  allProductReviews: { productId: string; reviews: Review[] }[]
+) => {
+  console.log("\n=== 📊 수집 결과 요약 ===");
+  let totalReviews = 0;
+  allProductReviews.forEach((product) => {
+    console.log(
+      `📦 제품 ${product.productId}: ${product.reviews.length}개 리뷰`
+    );
+    totalReviews += product.reviews.length;
+  });
+  console.log(`📋 총 리뷰 수: ${totalReviews}`);
+};

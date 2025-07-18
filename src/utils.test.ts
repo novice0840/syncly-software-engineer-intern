@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { delay, convertTimestampToYYYYMMDD, createProxyAgent } from "./utils";
+import { describe, it, expect } from "vitest";
+import { delay, convertTimestampToYYYYMMDD } from "./utils";
 
-describe("utils", () => {
+describe("utils.ts", () => {
   describe("delay", () => {
-    it("should delay execution for specified milliseconds", async () => {
+    it("지정된 밀리초 동안 실행을 지연시켜야 합니다", async () => {
       const start = Date.now();
       const delayTime = 100;
 
@@ -12,19 +12,19 @@ describe("utils", () => {
       const end = Date.now();
       const elapsed = end - start;
 
-      // Allow for some tolerance in timing
+      // 타이밍에 약간의 오차를 허용합니다
       expect(elapsed).toBeGreaterThanOrEqual(delayTime - 10);
       expect(elapsed).toBeLessThan(delayTime + 50);
     });
 
-    it("should return a promise", () => {
+    it("Promise를 반환해야 합니다", () => {
       const result = delay(100);
       expect(result).toBeInstanceOf(Promise);
     });
   });
 
   describe("convertTimestampToYYYYMMDD", () => {
-    it("should convert timestamp to YYYY-MM-DD format", () => {
+    it("타임스탬프를 YYYY-MM-DD 형식으로 변환해야 합니다", () => {
       // 2023-01-15 12:30:45
       const timestamp = 1673785845000;
       const result = convertTimestampToYYYYMMDD(timestamp);
@@ -32,7 +32,7 @@ describe("utils", () => {
       expect(result).toBe("2023-01-15");
     });
 
-    it("should handle single digit months and days with zero padding", () => {
+    it("한 자리 월과 일을 0으로 패딩하여 처리해야 합니다", () => {
       // 2023-03-05 08:15:30
       const timestamp = 1678003530000;
       const result = convertTimestampToYYYYMMDD(timestamp);
@@ -40,7 +40,7 @@ describe("utils", () => {
       expect(result).toBe("2023-03-05");
     });
 
-    it("should handle December 31st correctly", () => {
+    it("12월 31일을 올바르게 처리해야 합니다", () => {
       // 2023-12-31 00:00:00 UTC
       const timestamp = 1703980800000;
       const result = convertTimestampToYYYYMMDD(timestamp);
@@ -48,15 +48,15 @@ describe("utils", () => {
       expect(result).toBe("2023-12-31");
     });
 
-    it("should handle leap year February 29th", () => {
-      // 2024-02-29 12:00:00 (leap year)
+    it("윤년 2월 29일을 처리해야 합니다", () => {
+      // 2024-02-29 12:00:00 (윤년)
       const timestamp = 1709208000000;
       const result = convertTimestampToYYYYMMDD(timestamp);
 
       expect(result).toBe("2024-02-29");
     });
 
-    it("should handle year 2000 (Y2K)", () => {
+    it("2000년(Y2K)을 처리해야 합니다", () => {
       // 2000-01-01 00:00:00
       const timestamp = 946684800000;
       const result = convertTimestampToYYYYMMDD(timestamp);

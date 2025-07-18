@@ -1,21 +1,6 @@
 import { MAX_PAGES } from "./constant";
 import { getAllReviews, getMaxPage } from "./review";
-import { Review } from "./type";
-import { createExcelFile } from "./utils";
-
-const printCrawlingSummary = (
-  allProductReviews: { productId: string; reviews: Review[] }[]
-) => {
-  console.log("\n=== 📊 수집 결과 요약 ===");
-  let totalReviews = 0;
-  allProductReviews.forEach((product) => {
-    console.log(
-      `📦 제품 ${product.productId}: ${product.reviews.length}개 리뷰`
-    );
-    totalReviews += product.reviews.length;
-  });
-  console.log(`📋 총 리뷰 수: ${totalReviews}`);
-};
+import { createExcelFile, printCrawlingSummary } from "./utils";
 
 const main = async () => {
   const productIDs = [

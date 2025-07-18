@@ -76,5 +76,5 @@ export const getMaxPage = async (
       };
     };
   } = await crawlWithAxios(url, productId);
-  return data.rData?.paging?.totalPage;
+  return data?.rData?.paging?.totalPage;
 };
