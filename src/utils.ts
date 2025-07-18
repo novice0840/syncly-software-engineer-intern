@@ -4,7 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as dotenv from "dotenv";
 import { HttpsProxyAgent } from "https-proxy-agent";
-import { Review } from ".";
+import { Review } from "./type";
 
 dotenv.config();
 
@@ -75,11 +75,10 @@ const createExcelFileName = () => {
   return filename;
 };
 
-export const createExcelFile = (
-  allProductReviews: { productId: string; reviews: Review[] }[]
+const createAllReviewSheet = (
+  allProductReviews: { productId: string; reviews: Review[] }[],
+  workbook: XLSX.WorkBook
 ) => {
-  const workbook = XLSX.utils.book_new();
-
   const allReviews: Review[] = [];
   allProductReviews.forEach((product) => {
     allReviews.push(...product.reviews);
@@ -87,7 +86,12 @@ export const createExcelFile = (
 
   const worksheet = XLSX.utils.json_to_sheet(allReviews);
   XLSX.utils.book_append_sheet(workbook, worksheet, "전체 리뷰");
+};
 
+const createEachReviewSheet = (
+  allProductReviews: { productId: string; reviews: Review[] }[],
+  workbook: XLSX.WorkBook
+) => {
   allProductReviews.forEach((product) => {
     const worksheet = XLSX.utils.json_to_sheet(product.reviews);
     XLSX.utils.book_append_sheet(
@@ -96,6 +100,15 @@ export const createExcelFile = (
       `제품 ${product.productId}`
     );
   });
+};
+
+export const createExcelFile = (
+  allProductReviews: { productId: string; reviews: Review[] }[]
+) => {
+  const workbook = XLSX.utils.book_new();
+
+  createAllReviewSheet(allProductReviews, workbook);
+  createEachReviewSheet(allProductReviews, workbook);
 
   const outputDir = path.join(__dirname, "..", "output");
   if (!fs.existsSync(outputDir)) {
