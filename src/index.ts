@@ -10,7 +10,7 @@ interface Review {
   productId: string;
   productName: string;
   reviewId: string;
-  options: string[];
+  options: string; // 배열에서 문자열로 변경
   userName: string;
   rating: number;
   date: string;
@@ -76,7 +76,7 @@ const getReviews = async (
           productId: review.productId,
           productName: review.itemName.split(", ")[0],
           reviewId: review.reviewId,
-          options: review.itemName.split(", ").slice(1),
+          options: review.itemName.split(", ").slice(1).join(", "), // 엑셀에서는 배열로 처리하기 어려우므로 문자열로 변경
           userName: review.member.name,
           rating: review.rating,
           date: convertTimestampToYYYYMMDD(review.reviewAt),

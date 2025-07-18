@@ -89,6 +89,15 @@ npm run dev
 
 - HTTP 요청을 보낼 때 HTTP header의 Referer을 각 제품에 맡게 설정해야한다 (다만 postman으로 요청 시에는 Referer이 없어도 응답이 잘 오는데 이유를 아직 찾지 못했음)
 
+### options
+
+원래는 options의 타입을 문자열 배열로 설정했으나 excel에 options의 값이 표기가 되지 않아
+문자열로 변경하였습니다.
+
+### HTTP 522 에러
+
+cloudflare에서 발생하는 connection timed out 에러로 웹 서버에 대한 TCP 연결을 설정할 수 없을 때 발생합니다. 크롤링을 시도할 때 30~40번에 한 번씩 간헐적으로 발생하고 있습니다. 발생 원인은 파악하지 못하였습니다.
+
 ## IP Proxy
 
 처음에는 IP Proxy가 없어도 된다고 판단하여 없이 구현하였으나 요청의 갯수가 많아지면 500 에러가 종종 발생하는 상황을 맞닥뜨려 IP Proxy을 도입하게 되었음
