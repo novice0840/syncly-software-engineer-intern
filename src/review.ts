@@ -30,15 +30,9 @@ export const getReviews = async (
         content: review.content,
       }));
 
-      console.log(
-        `✅ ${productId} 제품의 ${page}페이지에서 ${reviews.length}개 리뷰를 성공적으로 가져왔습니다`
-      );
       return reviews;
     }
 
-    console.log(
-      `⚠️ ${productId} 제품의 ${page}페이지에서 리뷰를 찾을 수 없습니다`
-    );
     return [];
   } catch (error) {
     console.log(error);
@@ -53,10 +47,18 @@ export const getAllReviews = async (
   const allReviews: Review[] = [];
 
   for (let page = 1; page <= maxPages; page++) {
-    console.log(
-      `${productId} 제품의 ${page}/${maxPages}페이지를 가져오는 중입니다`
-    );
     const pageReviews = await getReviews(productId, page);
+
+    if (pageReviews.length === 0) {
+      console.log(
+        `⚠️ ${productId} 제품의 ${page}페이지에서 리뷰를 찾을 수 없습니다`
+      );
+      continue;
+    }
+
+    console.log(
+      `✅ ${productId} 제품의 ${page}페이지에서 ${pageReviews.length}개 리뷰를 성공적으로 가져왔습니다`
+    );
 
     allReviews.push(...pageReviews);
     // IP밴을 막기 위해 각 요청 사이에 지연을 추가

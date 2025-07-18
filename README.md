@@ -2,40 +2,15 @@
 
 싱클리 소프트웨어 인턴 과제
 
-## 🚀 TypeScript 쿠팡 리뷰 크롤러
-
-Oxylabs Residential Proxy를 사용하여 쿠팡 상품 리뷰를 수집하는 TypeScript 크롤러입니다.
-
-### 📋 기능
+## 📋 기능
 
 - 여러 상품의 리뷰를 동시에 수집
 - 각 상품당 최대 1,500개 리뷰 수집 (15페이지 × 10개)
 - Oxylabs Residential Proxy 사용으로 IP 차단 방지
-- 요청 간 지연 시간 설정 (기본 10초)
+- 요청 간 지연 시간 설정 (기본 5초)
 - 엑셀 파일로 결과 저장
-
-### 🔧 설정 방법
-
-1. **환경 설정 파일 생성**
-
-   ```bash
-   cp .env.example .env
-   ```
-
-2. **Oxylabs 프록시 정보 입력**
-   `.env` 파일에서 다음 값들을 실제 Oxylabs 계정 정보로 변경하세요:
-
-   ```
-   OXYLABS_PROXY_HOST=pr.oxylabs.io
-   OXYLABS_PROXY_PORT=7777
-   OXYLABS_USERNAME=your_actual_username
-   OXYLABS_PASSWORD=your_actual_password
-   ```
-
-3. **의존성 설치**
-   ```bash
-   npm install
-   ```
+- 각 제품별 요청을 별도로 실행 (Promise.all 이용)
+- 테스트 코드 작성
 
 ## 실행 환경
 
@@ -44,30 +19,21 @@ Node.js
 ## 실행 방법
 
 ```bash
-# 개발 모드로 실행
-npm run dev
-
-# 또는 빌드 후 실행
-npm run build
-npm start
-```
-
-### 📊 결과 파일
-
-- `output/` 디렉토리에 엑셀 파일이 생성됩니다
-- 파일명: `coupang_reviews_YYYY-MM-DDTHH-MM-SS.xlsx`
-- 전체 리뷰 시트와 각 상품별 시트가 포함됩니다
-
-### 🛡️ 주의사항
-
-- 실제 Oxylabs 계정과 프록시 정보가 필요합니다
-- 과도한 요청은 서비스 약관 위반이 될 수 있습니다
-- 적절한 지연 시간을 설정하여 사용하세요
-
-```
+# 설치
 npm install
+
+# 크롤링 실행 방법
 npm run dev
+
+# 테스트 코드 실행 방법
+npm run test
 ```
+
+## 결과 파일
+
+- `output/` 디렉토리에 엑셀 파일이 생성된다.
+- 파일명: `coupang_reviews_YYYY-MM-DDTHH-MM-SS.xlsx`
+- 전체 리뷰 시트와 각 상품별 시트가 포함된다.
 
 ## 참고 사항
 
@@ -80,18 +46,17 @@ npm run dev
 
 ![쿠팡 리뷰 페이지네이션](image.png)
 
--> 따라서, 유저가 사이트를 방문할 때와 최대한 유사한 방식으로 접근하는 것이 좋다고 판단
+-> 따라서, 유저가 사이트를 방문할 때와 최대한 유사한 방식으로 접근하는 것이 좋다고 판단하여 10으로 결정하였음
 
-- HTTP 요청을 보낼 때 HTTP header의 Referer을 각 제품에 맡게 설정해야한다 (다만 postman으로 요청 시에는 Referer이 없어도 응답이 잘 오는데 이유를 아직 찾지 못했음)
+### 변경 사항
 
-### options
-
-원래는 options의 타입을 문자열 배열로 설정했으나 excel에 options의 값이 표기가 되지 않아
-문자열로 변경하였습니다.
+- 조정한 요구사항: options의 타입을 문자열 배열에서 문자열로 변경
+- 조정 이유: 원래는 options의 타입을 문자열 배열로 설정했으나 excel에 options의 값이 표기가 되지 않아 문자열로 변경하였습니다
+- 대안: 배열에서 문자열로 타입을 변경
 
 ### HTTP 522 에러
 
-cloudflare에서 발생하는 connection timed out 에러로 웹 서버에 대한 TCP 연결을 설정할 수 없을 때 발생합니다. 크롤링을 시도할 때 30~40번에 한 번씩 간헐적으로 발생하고 있습니다. 발생 원인은 파악하지 못하였습니다.
+cloudflare에서 발생하는 connection timed out 에러로 웹 서버에 대한 TCP 연결을 설정할 수 없을 때 발생한다. 크롤링을 시도할 때 30~40번에 한 번씩 간헐적으로 발생하고 있다. 발생 원인은 파악하지 못하였음
 
 - 의문점: 요청 횟수가 일정 횟수를 넘어가면 요청이 완전히 막히는 방식이 아니고 간헐적으로 요청이 실패하는 이유를 모르겠음
 
@@ -99,6 +64,6 @@ cloudflare에서 발생하는 connection timed out 에러로 웹 서버에 대�
 
 각 제품별 크롤링 함수를 만들고 `Promise.all` 함수를 사용하여 개별적으로 실행시킨다. 제품의 갯수가 많아지더라도 전체 실행 시간이 길어지지 않는다.
 
-## IP Proxy
+### IP Proxy
 
 처음에는 IP Proxy가 없어도 된다고 판단하여 없이 구현하였으나 요청의 갯수가 많아지면 500 에러가 종종 발생하는 상황을 맞닥뜨려 IP Proxy을 도입하게 되었음

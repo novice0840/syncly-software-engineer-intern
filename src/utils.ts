@@ -34,8 +34,6 @@ export const crawlWithAxios = async <T>(
   url: string,
   productId: string
 ): Promise<T> => {
-  console.log(`Crawling URL: ${url}`);
-
   const proxyAgent = createProxyAgent();
   const headers = {
     accept:
