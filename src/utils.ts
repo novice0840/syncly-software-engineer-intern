@@ -2,9 +2,11 @@ import axios from "axios";
 import * as XLSX from "xlsx";
 import * as path from "path";
 import * as fs from "fs";
-
+import * as dotenv from "dotenv";
 import { HttpsProxyAgent } from "https-proxy-agent";
 import { Review } from ".";
+
+dotenv.config();
 
 export const delay = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -66,6 +68,13 @@ export const crawlWithAxios = async <T>(
   return response.data;
 };
 
+const createExcelFileName = () => {
+  const now = new Date();
+  const timestamp = now.toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  const filename = `coupang_reviews_${timestamp}.xlsx`;
+  return filename;
+};
+
 export const createExcelFile = (
   allProductReviews: { productId: string; reviews: Review[] }[]
 ) => {
@@ -76,17 +85,15 @@ export const createExcelFile = (
     allReviews.push(...product.reviews);
   });
 
-  if (allReviews.length > 0) {
-    const worksheet = XLSX.utils.json_to_sheet(allReviews);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "All Reviews");
-  }
+  const worksheet = XLSX.utils.json_to_sheet(allReviews);
+  XLSX.utils.book_append_sheet(workbook, worksheet, "전체 리뷰");
 
   allProductReviews.forEach((product) => {
     const worksheet = XLSX.utils.json_to_sheet(product.reviews);
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      `Product ${product.productId}`
+      `제품 ${product.productId}`
     );
   });
 
@@ -95,13 +102,9 @@ export const createExcelFile = (
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  const now = new Date();
-  const timestamp = now.toISOString().replace(/[:.]/g, "-").slice(0, 19);
-  const filename = `coupang_reviews_${timestamp}.xlsx`;
+  const filename = createExcelFileName();
   const filepath = path.join(outputDir, filename);
 
   XLSX.writeFile(workbook, filepath);
-  console.log(`Excel file created: ${filepath}`);
-
   return filepath;
 };
